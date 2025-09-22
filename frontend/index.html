@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG Chatbot</title>
+    <style>
+        body { font-family: sans-serif; margin: 2rem; }
+        #app-container { max-width: 600px; margin: auto; }
+        #question-input { width: 100%; padding: 0.5rem; margin-bottom: 1rem; }
+        #submit-button { padding: 0.5rem 1rem; cursor: pointer; }
+        #answer-area { margin-top: 1rem; padding: 1rem; border: 1px solid #ccc; background: #f9f9f9; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="app-container">
+        <h1>Ask a question</h1>
+        <input type="text" id="question-input" placeholder="Type your question here...">
+        <button id="submit-button">Get Answer</button>
+        <div id="answer-area">The answer will appear here.</div>
+    </div>
+
+    <script>
+        document.getElementById('submit-button').addEventListener('click', async () => {
+            const question = document.getElementById('question-input').value;
+            const answerArea = document.getElementById('answer-area');
+
+            if (!question) {
+                answerArea.textContent = 'Please enter a question.';
+                return;
+            }
+
+            answerArea.textContent = 'Loading...';
+
+            try {
+                const response = await fetch('YOU_API_ENDPOINT', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ query: question }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    answerArea.textContent = data.answer;
+                } else {
+                    answerArea.textContent = `Error: ${data.error}`;
+                }
+            } catch (error) {
+                answerArea.textContent = `An error occurred: ${error.message}`;
+            }
+        });
+    </script>
+</body>
+</html>
